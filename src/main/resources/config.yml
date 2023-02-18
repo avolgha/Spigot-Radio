@@ -1,0 +1,36 @@
+# you can set up permissions for channels in here.
+# example for a setup:
+# ```
+# channels:
+#   "107.x": "guild.107.radio"
+# ```
+#
+# you have to provide a key which is the frequency of
+# the channel and as value which is the permission
+# needed for the channel.
+#
+# frequency guidelines:
+#   1. any frequency is valid, but only stands for
+#      itself. (107 only stands for itself and not
+#      for the channels that could be created with
+#      a decimal point "." (e.g. 107.45) which won't
+#      be restricted)
+#   2. providing a "x"-character in the frequency
+#      acts as a wildcard operator. (107.x stands
+#      for all channels that have "107" in front of
+#      the decimal point)
+#
+# if you have a wildcard operator but won't restrict
+# one other channel, you can specify it directly:
+# ```
+# channels:
+#   "107.x": "guild.107.radio"
+#   "107.1": "guild.107.admin"
+# ```
+#
+# The permission can as well be replaced by two other
+# values:
+#   1. "op" which requires the player to be an operator
+#   2. "non" which allows every player to join this
+#      channel
+channels: { }

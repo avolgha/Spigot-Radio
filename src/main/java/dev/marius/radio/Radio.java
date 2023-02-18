@@ -5,9 +5,15 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 public final class Radio extends JavaPlugin {
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        reloadConfig();
+        ChannelManager.setupPermissions(Objects.requireNonNull(getConfig().getConfigurationSection("channels")));
+
         fullRegisterCommand("channel", new ChannelCommand());
         fullRegisterCommand("s", new SpeakCommand());
 

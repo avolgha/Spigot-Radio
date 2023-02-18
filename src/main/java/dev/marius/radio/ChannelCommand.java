@@ -10,15 +10,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class ChannelCommand implements CommandExecutor, TabCompleter {
-    public static final Pattern frequencyPattern = Pattern.compile("^\\d{1,3}(.\\d{1,2})?$");
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) return false;
@@ -46,7 +40,7 @@ public class ChannelCommand implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        if (!validateFrequency(frequency)) {
+        if (!FrequencyHelper.validateFrequency(frequency)) {
             player.sendMessage(
                     Component.join(JoinConfiguration.separator(Component.space()),
                             ChannelManager.Channel.prefixComponent,
@@ -54,9 +48,18 @@ public class ChannelCommand implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        String parsedFrequency = parseFrequency(frequency);
-        ChannelManager.getChannelByFrequency(parsedFrequency).addMember(player);
+        String parsedFrequency = FrequencyHelper.parseFrequency(frequency);
+        String permission = ChannelManager.getPermissionForChannel(parsedFrequency);
 
+        if (!checkPermission(player, permission)) {
+            player.sendMessage(
+                    Component.join(JoinConfiguration.separator(Component.space()),
+                            ChannelManager.Channel.prefixComponent,
+                            Component.text("You don't have the permission to enter that channel.").color(NamedTextColor.RED)));
+            return false;
+        }
+
+        ChannelManager.getChannelByFrequency(parsedFrequency).addMember(player);
         current.ifPresent(channel -> channel.removeMember(player));
 
         player.sendMessage(
@@ -67,14 +70,14 @@ public class ChannelCommand implements CommandExecutor, TabCompleter {
         return false;
     }
 
-    // we have to "parse" the frequency to eliminate doubled channels:
-    // 01 -> 1
-    private @NotNull String parseFrequency(String frequency) {
-        return String.format("%.2f", Float.parseFloat(frequency)).replace('y', '.');
-    }
-
-    private boolean validateFrequency(@NotNull String frequency) {
-        return frequency.matches(frequencyPattern.pattern());
+    private boolean checkPermission(Player player, String permission) {
+        if (Objects.equals(permission, "non")) {
+            return true;
+        } else if (Objects.equals(permission, "op")) {
+            return player.isOp();
+        } else {
+            return player.hasPermission(permission);
+        }
     }
 
     @Override
