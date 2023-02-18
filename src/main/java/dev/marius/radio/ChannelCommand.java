@@ -25,11 +25,23 @@ public class ChannelCommand implements CommandExecutor {
             player.sendMessage(
                     Component.join(JoinConfiguration.separator(Component.space()),
                             ChannelManager.Channel.prefixComponent,
-                            Component.text("Usage: /channel <frequency>").color(NamedTextColor.RED)));
+                            Component.text("Usage: /channel <frequency> or /channel leave").color(NamedTextColor.RED)));
             return false;
         }
 
         String frequency = args[0];
+
+        if (frequency.equalsIgnoreCase("leave")) {
+            current.ifPresent(channel -> {
+                channel.removeMember(player);
+                player.sendMessage(
+                        Component.join(JoinConfiguration.separator(Component.space()),
+                                ChannelManager.Channel.prefixComponent,
+                                Component.text("You disconnected from the channel.")));
+            });
+            return false;
+        }
+
         if (!validateFrequency(frequency)) {
             player.sendMessage(
                     Component.join(JoinConfiguration.separator(Component.space()),
@@ -46,7 +58,7 @@ public class ChannelCommand implements CommandExecutor {
         player.sendMessage(
                 Component.join(JoinConfiguration.separator(Component.space()),
                         ChannelManager.Channel.prefixComponent,
-                        Component.text("You joined channel " + parsedFrequency).color(NamedTextColor.RED)));
+                        Component.text("You joined channel " + parsedFrequency)));
 
         return false;
     }

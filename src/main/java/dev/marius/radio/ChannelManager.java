@@ -73,6 +73,10 @@ public final class ChannelManager {
 
         public void removeMember(Player player) {
             this.members.remove(player);
+
+            if (this.members.isEmpty()) {
+                ChannelManager.channelStorage.remove(this.frequency);
+            }
         }
 
         public void sendMessage(String message) {

@@ -9,6 +9,8 @@ public final class Radio extends JavaPlugin {
     public void onEnable() {
         Objects.requireNonNull(getCommand("channel")).setExecutor(new ChannelCommand());
         Objects.requireNonNull(getCommand("s")).setExecutor(new SpeakCommand());
+
+        getServer().getPluginManager().registerEvents(new RadioListener(), this);
     }
 
     @Override
