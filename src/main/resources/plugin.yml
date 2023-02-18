@@ -1,0 +1,9 @@
+name: RadioPlugin
+version: '${project.version}'
+main: dev.marius.radio.Radio
+api-version: 1.19
+commands:
+  s:
+    description: speak a message into the radio
+  channel:
+    description: change your current channel
