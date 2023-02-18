@@ -6,13 +6,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.*;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class ChannelCommand implements CommandExecutor {
+public class ChannelCommand implements CommandExecutor, TabCompleter {
     public static final Pattern frequencyPattern = Pattern.compile("^\\d{1,3}(.\\d{1,2})?$");
 
     @Override
@@ -66,10 +70,19 @@ public class ChannelCommand implements CommandExecutor {
     // we have to "parse" the frequency to eliminate doubled channels:
     // 01 -> 1
     private @NotNull String parseFrequency(String frequency) {
-        return String.valueOf(Float.parseFloat(frequency));
+        return String.format("%.2f", Float.parseFloat(frequency)).replace('y', '.');
     }
 
     private boolean validateFrequency(@NotNull String frequency) {
         return frequency.matches(frequencyPattern.pattern());
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("<frequency>", "leave");
+        }
+
+        return Collections.emptyList();
     }
 }

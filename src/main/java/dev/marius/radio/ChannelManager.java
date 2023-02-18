@@ -83,7 +83,7 @@ public final class ChannelManager {
             Component messageComponent = Component.join(
                     JoinConfiguration.separator(Component.space()),
                     prefixComponent,
-                    Component.text(message)
+                    Component.text(message).color(NamedTextColor.GRAY)
             );
             this.members.forEach(member -> member.sendMessage(messageComponent));
         }
